@@ -18,12 +18,15 @@ int _main(struct thread *td) {
   jailbreak();
 
   initSysUtil();
+  
+  char fw_version[6] = {0};
+  get_firmware_string(fw_version);
 
   touch_file("/mnt/usb0/.probe");
   if (!file_exists("/mnt/usb0/.probe")) {
     touch_file("/mnt/usb1/.probe");
     if (!file_exists("/mnt/usb1/.probe")) {
-      printf_notification("Restoring from internal");
+      printf_notification("Restoring from internal\nPS4 Firmware %s", fw_version);
       if (file_exists("/system_data/priv/mms/app.bak")) {
         copy_file("/system_data/priv/mms/app.bak", "/system_data/priv/mms/app.db");
       }
@@ -34,7 +37,7 @@ int _main(struct thread *td) {
         copy_file("/system_data/priv/mms/av_content_bg.bak", "/system_data/priv/mms/av_content_bg.db");
       }
     } else {
-      printf_notification("Restoring from USB1");
+      printf_notification("Restoring from USB1\nPS4 Firmware %s", fw_version);
       unlink("/mnt/usb1/.probe");
       mkdir("/mnt/usb1/PS4/", 0777);
       mkdir("/mnt/usb1/PS4/Backup/", 0777);
@@ -49,7 +52,7 @@ int _main(struct thread *td) {
       }
     }
   } else {
-    printf_notification("Restoring from USB0");
+    printf_notification("Restoring from USB0\nPS4 Firmware %s", fw_version);
     unlink("/mnt/usb0/.probe");
     mkdir("/mnt/usb0/PS4/", 0777);
     mkdir("/mnt/usb0/PS4/Backup/", 0777);
